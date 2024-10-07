@@ -7,7 +7,7 @@ import cookieParser from 'cookie-parser';
 import path from 'path';
 import cors from 'cors';
 import helmet from 'helmet';
-import {routes} from './routes';
+import {routes} from './routes/index';
 import errorMiddleware from './middleware/ErrorMiddleWare';
 import {initializeMongoDb} from './configs/mongodb'
 
@@ -18,15 +18,16 @@ initializeMongoDb();
 
 const PORT = process.env.PORT || 5000;
 const corsOptions = {
-  origin:function (origin: any, callback: any) {
-    if(process.env.CORS_ACCESS?.indexOf(origin) !== -1){
+  origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
+    // If no origin (like in Insomnia or Postman), allow the request
+    if (!origin || process.env.CORS_ACCESS?.split(',').indexOf(origin) !== -1) {
       callback(null, true);
     } else {
-      callback(new Error ('Not allowed by cors'))
+      callback(new Error('Not allowed by CORS'));
     }
   },
-  methods:["GET", "POST","DELETE","PUT"],
-  allowedHeader:[
+  methods: ["GET", "POST", "DELETE", "PUT"],
+  allowedHeaders: [
     "Content-Type",
     "Authorization",
     "Cache-Control",
@@ -34,8 +35,7 @@ const corsOptions = {
     "Pragma"
   ],
   credentials: true
-}
-// Middleware to parse incoming JSON requests
+};
 
 app.use(cors(corsOptions));
 app.use(bodyParser.json())
@@ -48,8 +48,8 @@ app.use(helmet());
 
 //routes
 app.use('/',routes);
-app.use(function(req:Request, res:Response, next: NextFunction) {
-  console.log('failed');
+app.use(function(err: Error | null, req:Request, res:Response, next: NextFunction) {
+  console.log(err.stack);
   next(createError(404));
 })
 

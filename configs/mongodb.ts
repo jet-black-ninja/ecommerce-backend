@@ -4,6 +4,7 @@ export const initializeMongoDb = () => {
     mongoose.set('strictQuery', false);
     mongoose.connect(mongoDB);
     const db = mongoose.connection;
+    console.log('Connected to MongoDB');
     db.on('error', console.error.bind(console, 'MongoDB connection Error'));
 
     process.on("SIGINT", () => {

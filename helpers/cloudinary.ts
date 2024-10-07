@@ -19,7 +19,7 @@ async function imageUploadUtil(file) {
 
 const upload = multer({storage});
 
-export default {
+export {
     upload,
     imageUploadUtil
 }

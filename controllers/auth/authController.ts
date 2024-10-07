@@ -3,11 +3,21 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from '../../models/User';
 
-const SALT = process.env.BC_SALT as string; // Ensure type safety
+const saltRounds = process.env.BC_SALT || 12; 
 
 // Register User
 const registerUser = async (req: Request, res: Response): Promise<void> => {
     const { userName, email, password } = req.body;
+
+    // Check if password is undefined or empty
+    if (!password) {
+        res.status(400).json({
+            success: false,
+            message: 'Password is required',
+        });
+        return;
+    }
+     // Debugging log
 
     try {
         const checkUser = await User.findOne({ email });
@@ -16,21 +26,26 @@ const registerUser = async (req: Request, res: Response): Promise<void> => {
                 success: false,
                 message: 'User Already exists with the same email. Please try again',
             });
+            return;
         }
 
-        const hashPassword = await bcrypt.hash(password, SALT);
+        // Hash password using bcrypt with 12 salt rounds
+        const hashPassword = await bcrypt.hash(password, saltRounds);
+
         const newUser = new User({
             userName,
             email,
             password: hashPassword,
         });
+
         await newUser.save();
+
         res.status(200).json({
             success: true,
             message: 'Registration Successful',
         });
     } catch (err) {
-        console.log(err);
+        console.error(err); // Log the error
         res.status(500).json({
             success: false,
             message: 'Some Error in Registration',
