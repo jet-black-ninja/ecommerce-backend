@@ -123,7 +123,7 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction): 
     }
 
     try {
-        const decoded = jwt.verify(token, `${process.env.TOKEN_SECRET_KEY}`);
+        const decoded = jwt.verify(token, process.env.TOKEN_SECRET_KEY as string);
         req.user = decoded; // Now TypeScript knows about req.user
         next();
     } catch (err) {

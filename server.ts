@@ -28,6 +28,7 @@ const corsOptions = {
   },
   methods: ["GET", "POST", "DELETE", "PUT"],
   allowedHeaders: [
+    "Origin",
     "Content-Type",
     "Authorization",
     "Cache-Control",

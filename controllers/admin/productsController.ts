@@ -100,6 +100,7 @@ const editProduct  = async (req:Request, res: Response): Promise<void> => {
                 message: 'Product not found',
             });
         }
+        
         findProduct.title = title || findProduct.title;
         findProduct.description = description || findProduct.description;
         findProduct.category = category || findProduct.category;
