@@ -64,6 +64,7 @@ const loginUser = async (req: Request, res: Response): Promise<void> => {
                 success: false,
                 message: 'User not found, please register first',
             });
+            return;
         }
 
         const checkPasswordMatch = await bcrypt.compare(password, checkUser.password);
@@ -72,6 +73,7 @@ const loginUser = async (req: Request, res: Response): Promise<void> => {
                 success: false,
                 message: 'Invalid Password',
             });
+            return;
         }
 
         const token = jwt.sign(
@@ -120,6 +122,7 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction): 
             success: false,
             message: 'Unauthorized, No Token Provided',
         });
+        return;
     }
 
     try {

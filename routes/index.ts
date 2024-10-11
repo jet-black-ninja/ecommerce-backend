@@ -3,7 +3,8 @@ import authRouter from './auth/authRoutes'
 import commonFeatureRouter from './common/featureRoute'
 import adminProductsRouter from './admin/productsRoutes';
 import adminOrdersRouter from './admin/orderRoutes';
-
+import shopProductRouter from './shop/ProductRoutes';
+import shopCartRouter from './shop/CartRoutes';
 export const routes = express.Router();
 //auth routes
 routes.use('/api/auth', authRouter);
@@ -12,9 +13,9 @@ routes.use('/api/admin/products', adminProductsRouter);
 routes.use('/api/admin/orders', adminOrdersRouter);
 //shop routes
     //address
-    //cart
     //order
-    //products
+    routes.use('/api/shop.products', shopProductRouter);
+    routes.use('/api/shop/cart',shopCartRouter )
     //review
     //search
 //common routes

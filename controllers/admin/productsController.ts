@@ -99,6 +99,7 @@ const editProduct  = async (req:Request, res: Response): Promise<void> => {
                 status: false,
                 message: 'Product not found',
             });
+            return ;
         }
         
         findProduct.title = title || findProduct.title;
@@ -135,11 +136,12 @@ const deleteProduct = async (req:Request, res: Response): Promise<void> => {
                 success: false,
                 message: "product not found"
             });
-        }
+            return ;
+        } 
         res.status(200).json({
             success: true,
             message: 'Product deleted Successfully',
-        })
+        });
     }catch(err){
         console.log(err);
         res.status(500).json({
