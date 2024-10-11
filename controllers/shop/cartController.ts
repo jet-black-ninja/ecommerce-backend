@@ -1,8 +1,6 @@
-import Cart, { ICartModel } from "../../models/Cart";
+import Cart, { ICartModel , ICartItem} from "../../models/Cart";
 import Product, { IProductModel, IProduct } from "../../models/Product";
 import { Request, Response } from "express";
-import { Types, Document } from "mongoose";
-import { ICartItem, ICart } from "../../models/Cart";
 
 const addToCart = async (req: Request, res: Response): Promise<void> => {
     try {

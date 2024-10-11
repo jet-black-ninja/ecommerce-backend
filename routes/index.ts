@@ -5,6 +5,8 @@ import adminProductsRouter from './admin/productsRoutes';
 import adminOrdersRouter from './admin/orderRoutes';
 import shopProductRouter from './shop/ProductRoutes';
 import shopCartRouter from './shop/CartRoutes';
+import shopAddressRouter from './shop/AddressRoutes';
+
 export const routes = express.Router();
 //auth routes
 routes.use('/api/auth', authRouter);
@@ -15,7 +17,8 @@ routes.use('/api/admin/orders', adminOrdersRouter);
     //address
     //order
     routes.use('/api/shop.products', shopProductRouter);
-    routes.use('/api/shop/cart',shopCartRouter )
+    routes.use('/api/shop/cart',shopCartRouter );
+    routes.use('/api/shop/address', shopAddressRouter);
     //review
     //search
 //common routes
