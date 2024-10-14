@@ -3,16 +3,22 @@ import Product from '../../models/Product';
 import { Request, Response } from 'express';
 
 const handleImageUpload = async (req:Request, res: Response):Promise<void> => {
-    try{
+    try {
+        if (!req.file) {
+            res.status(400).json({
+              success: false,
+              message: 'No file provided',
+            });
+            return ;
+          }
         const b64 = Buffer.from(req.file.buffer).toString("base64");
-        const url = "data:" + req.file.mimetype + ";base64," + b64;
-        const result = await imageUploadUtil(url);
-        
+        const base64Image = `data:${req.file.mimetype};base64,${b64}`;
+        const result = await imageUploadUtil(base64Image);
         res.status(201).json({
-            success: true,
-            result,
+          success: true,
+          result,
         });
-    } catch(err) {
+      } catch(err) {
         console.log(err);
         res.status(500).json({
             success: false,
