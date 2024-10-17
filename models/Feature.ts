@@ -1,17 +1,17 @@
-import mongoose,{Schema, Document} from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
 
-
-export interface IFeature{
-    image:string
+export interface IFeature {
+  image: string;
 }
 
-export interface IFeatureModel extends IFeature, Document{}
-const FeatureSchema:Schema = new Schema(
-    {
-        image:String,
-    },{
-        timestamps: true,
-    }
-)
+export interface IFeatureModel extends IFeature, Document {}
+const FeatureSchema: Schema = new Schema(
+  {
+    image: String,
+  },
+  {
+    timestamps: true,
+  }
+);
 
-export default mongoose.model<IFeatureModel>("Feature", FeatureSchema);
+export default mongoose.model<IFeatureModel>('Feature', FeatureSchema);

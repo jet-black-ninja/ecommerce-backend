@@ -1,6 +1,8 @@
-import { Router } from "express";
-import { addFeatureImage, getFeatureImage } from "../../controllers/common/featureController";
-
+import { Router } from 'express';
+import {
+  addFeatureImage,
+  getFeatureImage,
+} from '../../controllers/common/featureController';
 
 const router = Router();
 

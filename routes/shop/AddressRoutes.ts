@@ -1,9 +1,9 @@
-import { Router } from "express";
-import{
-    addAddress,
-    fetchAllAddress,
-    editAddress,
-    deleteAddress
+import { Router } from 'express';
+import {
+  addAddress,
+  fetchAllAddress,
+  editAddress,
+  deleteAddress,
 } from '../../controllers/shop/addressController';
 const router = Router();
 

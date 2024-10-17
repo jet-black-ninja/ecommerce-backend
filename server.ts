@@ -7,18 +7,21 @@ import cookieParser from 'cookie-parser';
 import path from 'path';
 import cors from 'cors';
 import helmet from 'helmet';
-import {routes} from './routes/index';
+import { routes } from './routes/index';
 import errorMiddleware from './middleware/ErrorMiddleWare';
-import {initializeMongoDb} from './configs/mongodb'
+import { initializeMongoDb } from './configs/mongodb';
 
 //initialize options
-const app:Express = express();
+const app: Express = express();
 dotenv.config();
 initializeMongoDb();
 
 const PORT = process.env.PORT || 5000;
 const corsOptions = {
-  origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
+  origin: function (
+    origin: string | undefined,
+    callback: (err: Error | null, allow?: boolean) => void
+  ) {
     // If no origin (like in Insomnia or Postman), allow the request
     if (!origin || process.env.CORS_ACCESS?.split(',').indexOf(origin) !== -1) {
       callback(null, true);
@@ -26,33 +29,39 @@ const corsOptions = {
       callback(new Error('Not allowed by CORS'));
     }
   },
-  methods: ["GET", "POST", "DELETE", "PUT"],
+  methods: ['GET', 'POST', 'DELETE', 'PUT'],
   allowedHeaders: [
-    "Origin",
-    "Content-Type",
-    "Authorization",
-    "Cache-Control",
-    "Expires",
-    "Pragma"
+    'Origin',
+    'Content-Type',
+    'Authorization',
+    'Cache-Control',
+    'Expires',
+    'Pragma',
   ],
-  credentials: true
+  credentials: true,
 };
 
 app.use(cors(corsOptions));
-app.use(bodyParser.json())
+app.use(bodyParser.json());
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({extended:false}));
+app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname,"public")));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(helmet());
 
 //routes
-app.use('/',routes);
-app.use(function(err: Error | null, req:Request, res:Response, next: NextFunction) {
+app.use('/', routes);
+//Error Middleware
+app.use(function (
+  err: Error | null,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   console.log(err.stack);
   next(createError(404));
-})
+});
 
 app.use(errorMiddleware);
 // Start the server

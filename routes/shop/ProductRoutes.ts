@@ -1,9 +1,9 @@
-import {Router} from 'express';
+import { Router } from 'express';
 
-import{
-    getFilteredProducts,
-    getProductDetails
-} from '../../controllers/shop/productController'
+import {
+  getFilteredProducts,
+  getProductDetails,
+} from '../../controllers/shop/productController';
 
 const router = Router();
 
