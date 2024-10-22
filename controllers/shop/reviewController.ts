@@ -3,7 +3,7 @@ import Product from '../../models/Product';
 import Review from '../../models/Review';
 import { Response, Request } from 'express';
 
-const addProductReview = async (req: Request, res: Response) => {
+const addProductReview = async (req: Request, res: Response): Promise<void> => {
   try {
     const { productId, userId, userName, reviewMessage, reviewValue } =
       req.body;
@@ -13,10 +13,11 @@ const addProductReview = async (req: Request, res: Response) => {
       'cartItems.productId': productId,
     });
     if (!order) {
-      return res.status(403).json({
+      res.status(403).json({
         success: false,
         message: 'You need to purchase a product to review it',
       });
+      return;
     }
     const checkExistingReview = await Review.findOne({
       productId,
@@ -59,15 +60,19 @@ const addProductReview = async (req: Request, res: Response) => {
   }
 };
 
-const getProductReviews = async (req: Request, res: Response) => {
+const getProductReviews = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const { productId } = req.params;
     const review = await Review.find({ productId });
     if (!review) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         message: 'No reviews found for this product',
       });
+      return;
     }
     res.status(200).json({
       success: true,

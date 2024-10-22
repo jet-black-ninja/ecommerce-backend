@@ -2,10 +2,10 @@ import { Router } from 'express';
 
 import {
   addProductReview,
-  getProductReview,
-} from '../../controllers/shop/reviewController.ts';
+  getProductReviews,
+} from '../../controllers/shop/reviewController';
 const router = Router();
 router.post('/add', addProductReview);
-router.get('/:productId', getProductReview);
+router.get('/:productId', getProductReviews);
 
 export default router;
