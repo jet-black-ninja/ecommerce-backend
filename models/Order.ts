@@ -7,7 +7,7 @@ export interface IOrder {
   cartId: string;
   cartItems: ICartItem[];
   addressInfo: IAddress;
-  OrderStatus: string;
+  orderStatus: string;
   paymentMethod: string;
   paymentStatus: string;
   totalAmount: number;
@@ -39,7 +39,7 @@ const OrderSchema: Schema = new Schema({
     phone: String,
     notes: String,
   },
-  OrderStatus: String,
+  orderStatus: String,
   paymentMethod: String,
   paymentStatus: String,
   totalAmount: Number,

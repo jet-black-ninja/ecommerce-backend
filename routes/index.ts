@@ -19,7 +19,7 @@ routes.use('/api/admin/orders', adminOrdersRouter);
 routes.use('/api/shop/products', shopProductRouter);
 routes.use('/api/shop/cart', shopCartRouter);
 routes.use('/api/shop/address', shopAddressRouter);
-// routes.use('/api/shop/order', shopOrderRouter )
+routes.use('/api/shop/order', shopOrderRouter )
 //review
 routes.use('/api/shop/review', shopReviewRouter);
 //search

@@ -73,7 +73,19 @@ const updateOrderStatus = async (
       });
       return;
     }
-    await Order.findByIdAndUpdate(id, { orderStatus });
+    const updatedOrder = await Order.findByIdAndUpdate(
+      id,
+      { status: orderStatus },
+      { new: true }
+    );
+
+    if (!updatedOrder) {
+      res.status(404).json({
+        success: false,
+        message: 'Order not found!',
+      });
+      return;
+    }
 
     res.status(200).json({
       success: true,
