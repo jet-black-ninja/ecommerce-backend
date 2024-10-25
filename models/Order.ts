@@ -1,10 +1,10 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document, Types } from 'mongoose';
 import { IAddress } from './Address';
 import { ICartItem } from './Cart';
 
 export interface IOrder {
-  userId: string;
-  cartId: string;
+  userId: Types.ObjectId;
+  cartId: Types.ObjectId;
   cartItems: ICartItem[];
   addressInfo: IAddress;
   orderStatus: string;
@@ -20,11 +20,22 @@ export interface IOrder {
 export interface IOrderModel extends IOrder, Document {}
 
 const OrderSchema: Schema = new Schema({
-  userId: String,
-  cartId: String,
+  userId: {
+    type: Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+  cartId: {
+    type: Types.ObjectId,
+    ref: 'Cart',
+    required: true,
+  },
   cartItems: [
     {
-      productId: String,
+      productId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Product',
+      },
       title: String,
       image: String,
       price: Number,
@@ -32,7 +43,10 @@ const OrderSchema: Schema = new Schema({
     },
   ],
   addressInfo: {
-    addressId: String,
+    addressId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Address',
+    },
     address: String,
     city: String,
     pincode: String,

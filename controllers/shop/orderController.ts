@@ -3,8 +3,11 @@ import Order from '../../models/Order';
 import Cart from '../../models/Cart';
 import Product from '../../models/Product';
 import { Request, Response } from 'express';
+import * as dotenv from 'dotenv';
 
+dotenv.config();
 const frontendUrl = process.env.FRONTEND_URL;
+
 const createOrder = async (req: Request, res: Response): Promise<void> => {
   try {
     const {
@@ -70,10 +73,15 @@ const createOrder = async (req: Request, res: Response): Promise<void> => {
           payerId,
         });
         await newlyCreatedOrder.save();
-        const approvalURL = paymentInfo.links.find(
+        const approvalURL = paymentInfo.links?.find(
           (link) => link.rel === 'approval_url'
         ).href;
-
+        if (!approvalURL) {
+          res
+            .status(500)
+            .json({ status: false, Message: 'Approval URL not found' });
+          return;
+        }
         res.status(201).json({
           success: true,
           approvalURL,
@@ -93,42 +101,78 @@ const createOrder = async (req: Request, res: Response): Promise<void> => {
 const capturePayment = async (req: Request, res: Response): Promise<void> => {
   try {
     const { paymentId, payerId, orderId } = req.body;
-    let order = await Order.findById(orderId);
-    if (!order) {
-      res.status(404).json({ message: 'Order not found' });
+
+    // Validate orderId
+    if (!orderId) {
+      res.status(400).json({ 
+        success: false,
+        message: 'Order ID is required' 
+      });
       return;
     }
+
+    let order = await Order.findById(orderId);
+    if (!order) {
+      res.status(404).json({ 
+        success: false,
+        message: 'Order not found' 
+      });
+      return;
+    }
+
+    // Update order status
     order.paymentStatus = 'paid';
     order.orderStatus = 'pending';
     order.paymentId = paymentId;
     order.payerId = payerId;
 
+    // Update product stock
     for (let item of order.cartItems) {
       let product = await Product.findById(item.productId);
       if (!product) {
         res.status(404).json({
           success: false,
-          message: 'Product not found',
+          message: `Product not found: ${item.productId}`,
         });
         return;
       }
       product.totalStock -= item.quantity;
       await product.save();
     }
-    const getCartId = order.cartId;
-    await Cart.findByIdAndDelete(getCartId);
 
+    // Handle cart deletion
+    if (!order.cartId) {
+      console.log('No cart ID found for order:', orderId);
+      // You might want to continue processing even if cart deletion fails
+    } else {
+      try {
+        const cart = await Cart.findById(order.cartId);
+        if (cart) {
+          await cart.deleteOne();
+        } else {
+          console.log('Cart not found:', order.cartId);
+        }
+      } catch (cartError) {
+        console.error('Error deleting cart:', cartError);
+        // You might want to continue processing even if cart deletion fails
+      }
+    }
+
+    // Save order changes
     await order.save();
+
     res.status(200).json({
       success: true,
       message: 'Order Confirmed',
+      orderId: order._id
     });
-  } catch (err) {
-    console.log(err);
 
+  } catch (err) {
+    console.error('Error in capturePayment:', err);
     res.status(500).json({
       success: false,
       message: 'Internal Server Error',
+      error: err instanceof Error ? err.message : 'Unknown error'
     });
   }
 };
