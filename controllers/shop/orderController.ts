@@ -4,6 +4,7 @@ import Cart from '../../models/Cart';
 import Product from '../../models/Product';
 import { Request, Response } from 'express';
 import * as dotenv from 'dotenv';
+import mongoose from 'mongoose';
 
 dotenv.config();
 const frontendUrl = process.env.FRONTEND_URL;
@@ -99,23 +100,25 @@ const createOrder = async (req: Request, res: Response): Promise<void> => {
 };
 
 const capturePayment = async (req: Request, res: Response): Promise<void> => {
+  console.log('i was here');
   try {
+    
     const { paymentId, payerId, orderId } = req.body;
 
     // Validate orderId
     if (!orderId) {
-      res.status(400).json({ 
+      res.status(400).json({
         success: false,
-        message: 'Order ID is required' 
+        message: 'Order ID is required',
       });
       return;
     }
 
     let order = await Order.findById(orderId);
     if (!order) {
-      res.status(404).json({ 
+      res.status(404).json({
         success: false,
-        message: 'Order not found' 
+        message: 'Order not found',
       });
       return;
     }
@@ -146,11 +149,15 @@ const capturePayment = async (req: Request, res: Response): Promise<void> => {
       // You might want to continue processing even if cart deletion fails
     } else {
       try {
-        const cart = await Cart.findById(order.cartId);
-        if (cart) {
-          await cart.deleteOne();
+        if (mongoose.Types.ObjectId.isValid(order.cartId)) {
+          const cart = await Cart.findById(order.cartId);
+          if (cart) {
+            await cart.deleteOne();
+          } else {
+            console.log('Cart not found:', order.cartId);
+          }
         } else {
-          console.log('Cart not found:', order.cartId);
+        console.log('Invalid Cart Id format', order.cartId)
         }
       } catch (cartError) {
         console.error('Error deleting cart:', cartError);
@@ -164,15 +171,14 @@ const capturePayment = async (req: Request, res: Response): Promise<void> => {
     res.status(200).json({
       success: true,
       message: 'Order Confirmed',
-      orderId: order._id
+      orderId: order._id,
     });
-
   } catch (err) {
     console.error('Error in capturePayment:', err);
     res.status(500).json({
       success: false,
       message: 'Internal Server Error',
-      error: err instanceof Error ? err.message : 'Unknown error'
+      error: err instanceof Error ? err.message : 'Unknown error',
     });
   }
 };
